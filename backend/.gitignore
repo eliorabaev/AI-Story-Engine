@@ -4,3 +4,6 @@ __pycache__/
 *.py[cod]
 *.egg-info/
 .vscode/
+database.db
+*.db
+*.sqlite3
