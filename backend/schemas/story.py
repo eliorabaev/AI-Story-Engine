@@ -36,3 +36,9 @@ class CompleteStoryResponse(StoryBase):
     
     class Config:
         from_attributes = True
+
+class AllComplitedStoriesResponse(BaseModel):
+    stories: List[CompleteStoryResponse]
+
+    class Config:
+        from_attributes = True

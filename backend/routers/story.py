@@ -8,7 +8,7 @@ from db.database import get_db, SessionLocal
 from models.story import Story, StoryNode
 from models.job import StoryJob
 from schemas.story import (
-    CreateStoryRequest, CompleteStoryResponse, CompleteStoryNodeResponse
+    CreateStoryRequest, CompleteStoryResponse, CompleteStoryNodeResponse, AllComplitedStoriesResponse
 )
 
 from schemas.job import StoryJobResponse
@@ -125,3 +125,16 @@ def build_complete_story_tree(db: Session, story: Story) -> CompleteStoryRespons
         all_nodes=node_dict
     )
 
+@router.get("/completed/all", response_model=AllComplitedStoriesResponse)
+def get_all_completed_stories(db: Session = Depends(get_db)):
+    completed_jobs = db.query(StoryJob).filter(StoryJob.status == "completed").all()
+    
+    stories_response = []
+    
+    for job in completed_jobs:
+        story = db.query(Story).filter(Story.id == job.story_id).first()
+        if story:
+            complete_story = build_complete_story_tree(db, story)
+            stories_response.append(complete_story)
+    
+    return AllComplitedStoriesResponse(stories=stories_response)
